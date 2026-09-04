@@ -2,12 +2,21 @@
 import SwiftUI
 
 struct GameView: View {
-    
+
     let chosenNumber: Int
     let numberOfQuestions: Int
+    @State private var session: GameSession
+    init(chosenNumber: Int, numberOfQuestions: Int) {
+        self.chosenNumber = chosenNumber
+        self.numberOfQuestions = numberOfQuestions
+        _session = State(
+            initialValue: GameSession(
+                chosenNumber: chosenNumber,
+                numberOfQuestions: numberOfQuestions
+            )
+        )
+    }
     @State private var currentQuestion = 1
-    @State private var question = ""
-    @State private var answer = 0
     @State private var userAnswer = ""
     @State private var showingAlert = false
     @State private var alertMessage = ""
@@ -15,14 +24,10 @@ struct GameView: View {
     @State private var isFinished = false
 
     var body: some View {
-        let result = generateQuestion(chosenNumber: chosenNumber)
-
+        
         VStack {
             List {
-                Text(question)
-            }.onAppear {
-                question = result.question
-                answer = result.answer
+                Text(session.currentQuestion.text)
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -36,25 +41,20 @@ struct GameView: View {
             TextField("Enter your answer...", text: $userAnswer)
                 .keyboardType(.numberPad)
             Button("Check") {
-                if Int(userAnswer) == answer {
-                    question = result.question
-                    answer = result.answer
-                    showingAlert = true
+                if Int(userAnswer) == session.currentQuestion.correctAnswer {
+                    session.correctAnswers += 1
                     alertMessage = "Your answer is correct!"
-                    userAnswer = ""
-                    correctAnswers += 1
                 } else {
-                    question = result.question
-                    answer = result.answer
-                    showingAlert = true
-                    alertMessage = "Your answer is incorrect..."
-                    userAnswer = ""
+                    alertMessage = "Your answer is incorrect."
                 }
-                if currentQuestion == numberOfQuestions {
+
+                if session.currentQuestionIndex == session.questions.count - 1 {
                     isFinished = true
                 } else {
-                    currentQuestion += 1
+                    session.currentQuestionIndex += 1
                 }
+                userAnswer = ""
+                showingAlert = true
             }
             .alert("Result", isPresented: $showingAlert) {
                 Button("OK") { }
@@ -64,6 +64,7 @@ struct GameView: View {
         }
         .navigationDestination(isPresented: $isFinished) {
             ResultView(
+                chosenNumber: chosenNumber,
                 correctAnswers: correctAnswers,
                 numberOfQuestions: numberOfQuestions
             )
