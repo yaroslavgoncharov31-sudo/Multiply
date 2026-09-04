@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ResultView: View {
+    let chosenNumber: Int
     let correctAnswers: Int
     let numberOfQuestions: Int
     var body: some View {
@@ -25,13 +26,19 @@ struct ResultView: View {
                 .padding(75)
             Spacer()
         }
+        .navigationBarBackButtonHidden(true)
+
         HStack {
-            NavigationLink("Start new game") {
+            NavigationLink("Return to menu") {
                 ContentView()
+            }
+            .padding(15)
+            NavigationLink("Play one more time") {
+                GameView(chosenNumber: chosenNumber, numberOfQuestions: numberOfQuestions)
             }
         }
     }
 }
 #Preview {
-    ResultView(correctAnswers: 7, numberOfQuestions: 10)
+    ResultView(chosenNumber: 2, correctAnswers: 7, numberOfQuestions: 10)
 }
