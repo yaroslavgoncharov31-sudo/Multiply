@@ -8,8 +8,8 @@ struct GameSession {
         questions[currentQuestionIndex]
     }
 
-    init(chosenNumber: Int, numberOfQuestions: Int) {
-        questions = (0..<numberOfQuestions).map {
+    init(chosenNumber: Int, amountOfQuestions: Int) {
+        questions = (0..<amountOfQuestions).map {
             Question(
                 chosenNumber: chosenNumber,
                 multiplier: Int.random(in: 1...12),
