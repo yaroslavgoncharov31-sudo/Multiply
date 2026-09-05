@@ -16,11 +16,9 @@ struct GameView: View {
             )
         )
     }
-    @State private var currentQuestion = 1
     @State private var userAnswer = ""
     @State private var showingAlert = false
     @State private var alertMessage = ""
-    @State private var correctAnswers = 0
     @State private var isFinished = false
 
     var body: some View {
@@ -28,13 +26,15 @@ struct GameView: View {
         VStack {
             List {
                 Text(session.currentQuestion.text)
+                    .bold()
             }
         }
         .navigationBarBackButtonHidden(true)
         ZStack {
             Section {
-                Text("Question \(currentQuestion) out of \(numberOfQuestions)")
+                Text("Question \(session.currentQuestionIndex + 1) out of \(numberOfQuestions)")
                 .padding(25)
+
             }
         }
         VStack {
@@ -65,7 +65,7 @@ struct GameView: View {
         .navigationDestination(isPresented: $isFinished) {
             ResultView(
                 chosenNumber: chosenNumber,
-                correctAnswers: correctAnswers,
+                correctAnswers: session.correctAnswers,
                 numberOfQuestions: numberOfQuestions
             )
             }
@@ -75,5 +75,5 @@ struct GameView: View {
 
 
 #Preview {
-    GameView(chosenNumber: 7, numberOfQuestions: 10)
+    GameView(chosenNumber: 2, numberOfQuestions: 5)
 }
