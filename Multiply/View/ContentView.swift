@@ -3,8 +3,14 @@ import SwiftUI
 struct ContentView: View {
     @State private var chosenNumber = 2
     @State private var amountOfQuestions: QuestionAmount = .short
+    @State private var navigationToGame = false
     var body: some View {
+
         NavigationStack {
+            Text("Multiply")
+                .font(.title)
+                .bold()
+
             List {
                 Section {
                     Text("Which number you want to practice?")
@@ -22,15 +28,21 @@ struct ContentView: View {
                         }
                     }
                 }
-            }.navigationTitle("Multiply")
+            }
 
             Section {
-                NavigationLink("I'm Ready") {
-                    GameView(chosenNumber: chosenNumber,
-                             numberOfQuestions: amountOfQuestions.rawValue
-
+                Button("I'm Ready") {
+                    navigationToGame = true
+                }
+                .buttonStyle(PillButtonStyle())
+                .navigationDestination(isPresented: $navigationToGame) {
+                    GameView(
+                        chosenNumber: chosenNumber,
+                        amountOfQuestions: amountOfQuestions.rawValue,
+                        onReturnToMenu: {
+                            navigationToGame = false
+                        }
                     )
-
                 }
             }
 
