@@ -22,7 +22,7 @@ struct GameView: View {
     @State private var isFinished = false
 
     var body: some View {
-        
+
         VStack {
             List {
                 Text(session.currentQuestion.text)
@@ -33,8 +33,7 @@ struct GameView: View {
         ZStack {
             Section {
                 Text("Question \(session.currentQuestionIndex + 1) out of \(numberOfQuestions)")
-                .padding(25)
-
+                    .padding(25)
             }
         }
         VStack {
@@ -68,12 +67,9 @@ struct GameView: View {
                 correctAnswers: session.correctAnswers,
                 numberOfQuestions: numberOfQuestions
             )
-            }
         }
     }
-
-
-
+}
 #Preview {
     GameView(chosenNumber: 2, numberOfQuestions: 5)
 }

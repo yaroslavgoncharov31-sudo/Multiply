@@ -14,7 +14,6 @@ struct ContentView: View {
                             .frame(maxWidth: .infinity, alignment: .center)
                         Stepper("", value: $chosenNumber, in: 2...12).labelsHidden()
                     }
-
                 }
                 Section {
                     Picker("Choose number of questions: ", selection: $amountOfQuestions) {
@@ -37,13 +36,8 @@ struct ContentView: View {
 
         }
         .navigationBarBackButtonHidden(true)
-
-
-
     }
 }
-
-
 #Preview {
     ContentView()
 }
