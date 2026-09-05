@@ -11,8 +11,8 @@ struct ResultView: View {
     let chosenNumber: Int
     let correctAnswers: Int
     let numberOfQuestions: Int
+    @State private var navigateToGame = false
     var body: some View {
-        let wrongAnswers = numberOfQuestions - correctAnswers
         VStack {
             Text("Game is over!")
                 .font(.title)
@@ -22,18 +22,30 @@ struct ResultView: View {
                 .padding(25)
                 .minimumScaleFactor(0.5)
                 .lineLimit(1)
+            Spacer()
             Text("Do you want to start new game?")
-                .padding(75)
+                .padding(25)
+                .font(.headline)
             Spacer()
         }
         .navigationBarBackButtonHidden(true)
 
-        HStack {
-            NavigationLink("Return to menu") {
+        HStack(spacing: 15) {
+            Button("Return to menu") {
+                navigateToGame = true
+            }
+            .buttonStyle(PillButtonStyle())
+            .navigationDestination(isPresented: $navigateToGame) {
                 ContentView()
             }
             .padding(15)
-            NavigationLink("Play one more time") {
+            Button("Play one more time") {
+                navigateToGame = true
+            }
+
+            .padding(15)
+            .buttonStyle(PillButtonStyle())
+            .navigationDestination(isPresented: $navigateToGame) {
                 GameView(chosenNumber: chosenNumber, numberOfQuestions: numberOfQuestions)
             }
         }
