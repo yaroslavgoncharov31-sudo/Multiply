@@ -4,15 +4,22 @@ import SwiftUI
 struct GameView: View {
 
     let chosenNumber: Int
-    let numberOfQuestions: Int
+    let amountOfQuestions: Int
+    let onReturnToMenu: () -> Void
     @State private var session: GameSession
-    init(chosenNumber: Int, numberOfQuestions: Int) {
+
+    init(
+        chosenNumber: Int,
+        amountOfQuestions: Int,
+        onReturnToMenu: @escaping () -> Void
+    ) {
         self.chosenNumber = chosenNumber
-        self.numberOfQuestions = numberOfQuestions
+        self.amountOfQuestions = amountOfQuestions
+        self.onReturnToMenu = onReturnToMenu
         _session = State(
             initialValue: GameSession(
                 chosenNumber: chosenNumber,
-                numberOfQuestions: numberOfQuestions
+                amountOfQuestions: amountOfQuestions
             )
         )
     }
@@ -23,53 +30,76 @@ struct GameView: View {
 
     var body: some View {
 
-        VStack {
-            List {
-                Text(session.currentQuestion.text)
-                    .bold()
-            }
-        }
-        .navigationBarBackButtonHidden(true)
-        ZStack {
-            Section {
-                Text("Question \(session.currentQuestionIndex + 1) out of \(numberOfQuestions)")
-                    .padding(25)
-            }
-        }
-        VStack {
-            TextField("Enter your answer...", text: $userAnswer)
-                .keyboardType(.numberPad)
-            Button("Check") {
-                if Int(userAnswer) == session.currentQuestion.correctAnswer {
-                    session.correctAnswers += 1
-                    alertMessage = "Your answer is correct!"
-                } else {
-                    alertMessage = "Your answer is incorrect."
-                }
 
-                if session.currentQuestionIndex == session.questions.count - 1 {
-                    isFinished = true
-                } else {
-                    session.currentQuestionIndex += 1
+        HStack {
+            Text(session.currentQuestion.text)
+                .frame(maxWidth: .infinity, maxHeight: 250)
+                .font(.title)
+                .bold()
+        }
+        Spacer()
+            .navigationBarBackButtonHidden(true)
+
+        VStack(spacing: 20) {
+
+            Text("Question \(session.currentQuestionIndex + 1) out of \(amountOfQuestions)")
+
+            TextField("Enter your answer...", text: $userAnswer)
+                .multilineTextAlignment(.center)
+                .padding()
+                .background(Color(.systemGray6))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .keyboardType(.numberPad)
+            Section {
+                Button("Check") {
+                    if Int(userAnswer) == session.currentQuestion.correctAnswer {
+                        session.correctAnswers += 1
+                        alertMessage = "Your answer is correct!"
+                    } else {
+                        alertMessage = "Your answer is incorrect."
+                    }
+
+                    if session.currentQuestionIndex == session.questions.count - 1 {
+                        isFinished = true
+                    } else {
+                        session.currentQuestionIndex += 1
+                    }
+                    userAnswer = ""
+                    showingAlert = true
                 }
-                userAnswer = ""
-                showingAlert = true
-            }
-            .alert("Result", isPresented: $showingAlert) {
-                Button("OK") { }
-            } message: {
-                Text(alertMessage)
+                .buttonStyle(PillButtonStyle())
+                .alert("Result", isPresented: $showingAlert) {
+                    Button("OK") { }
+                } message: {
+                    Text(alertMessage)
+                }
             }
         }
+        .padding(.horizontal, 25)
         .navigationDestination(isPresented: $isFinished) {
             ResultView(
-                chosenNumber: chosenNumber,
                 correctAnswers: session.correctAnswers,
-                numberOfQuestions: numberOfQuestions
+                amountOfQuestions: amountOfQuestions,
+                onReturnToMenu: {
+                    isFinished = false
+                    onReturnToMenu()
+                },
+                onPlayAgain: {
+                    session = GameSession(
+                        chosenNumber: chosenNumber,
+                        amountOfQuestions: amountOfQuestions
+                    )
+                    userAnswer = ""
+                    isFinished = false
+                }
             )
         }
     }
 }
 #Preview {
-    GameView(chosenNumber: 2, numberOfQuestions: 5)
+    GameView(
+        chosenNumber: 2,
+        amountOfQuestions: 5,
+        onReturnToMenu: {}
+    )
 }
