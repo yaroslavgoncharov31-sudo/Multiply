@@ -52,6 +52,12 @@ struct GameView: View {
                 .keyboardType(.numberPad)
             Section {
                 Button("Check") {
+                    if userAnswer.isEmpty {
+                        alertMessage = "Answer can't be empty"
+                        showingAlert = true
+                        return
+                    }
+                    
                     if Int(userAnswer) == session.currentQuestion.correctAnswer {
                         session.correctAnswers += 1
                         alertMessage = "Your answer is correct!"
