@@ -66,6 +66,7 @@ struct ContentView: View {
                 }
 
             }
+            .padding(10)
             .background(Color(.systemGray6))
         }
     }
