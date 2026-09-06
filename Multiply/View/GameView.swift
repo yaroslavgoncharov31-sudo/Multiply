@@ -50,15 +50,19 @@ struct GameView: View {
                 .background(Color(.systemGray6))
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .keyboardType(.numberPad)
-            Section {
+
                 Button("Check") {
-                    if userAnswer.isEmpty {
+                    guard !userAnswer.isEmpty else {
                         alertMessage = "Answer can't be empty"
                         showingAlert = true
                         return
                     }
-                    
-                    if Int(userAnswer) == session.currentQuestion.correctAnswer {
+                    guard let validInput = Int(userAnswer) else {
+                        alertMessage = "Invalid Input"
+                        showingAlert = true
+                        return
+                    }
+                    if validInput == session.currentQuestion.correctAnswer {
                         session.correctAnswers += 1
                         alertMessage = "Your answer is correct!"
                     } else {
@@ -79,7 +83,6 @@ struct GameView: View {
                 } message: {
                     Text(alertMessage)
                 }
-            }
         }
         .padding(.horizontal, 25)
         .navigationDestination(isPresented: $isFinished) {
